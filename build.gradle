@@ -1,0 +1,86 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'war'
+apply plugin: 'cargo'
+
+env = System.getenv()
+//tomcatHome = "/usr/local/Cellar/tomcat/7.0.29/libexec"
+tomcatHome = "/Users/twer/Downloads/software/apache-tomcat-7.0.30"
+
+//tomcatHome = "$env.CATALINA_HOME"
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+            name = 'GitHub'
+            addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
+        }
+    }
+
+    dependencies {
+        classpath 'bmuschko:gradle-cargo-plugin:0.5.5'
+    }
+}
+
+cargo {
+    containerId = 'tomcat7x'
+    port = 8080
+    context = 'myMVC'
+
+    local {
+        homeDir = file(tomcatHome)
+    }
+}
+
+dependencies {
+    compile (
+            'commons-collections:commons-collections:3.2',
+            'junit:junit:4.+',
+            'org.springframework:spring-core:3.1.2.RELEASE',
+            'org.springframework:spring-web:3.1.2.RELEASE',
+            'org.springframework:spring-webmvc:3.1.2.RELEASE',
+            'javax.servlet:jstl:1.1.2',
+            'taglibs:standard:1.1.2',
+            'org.apache.tomcat:servlet-api:6.0.35',
+            'org.springframework.data:spring-data-jpa:1.1.0.RELEASE',
+            'org.springframework:spring-orm:3.1.2.RELEASE',
+            'org.springframework:spring-context:3.1.2.RELEASE',
+            'org.springframework:spring-tx:3.1.2.RELEASE',
+            'org.apache.openjpa:openjpa-persistence-jdbc:2.2.0',
+            'org.hibernate:hibernate-core:4.1.7.Final',
+            'org.hibernate:hibernate-entitymanager:4.1.7.Final',
+            'org.hibernate:hibernate-annotations:3.5.6-Final',
+            'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
+            'org.slf4j:slf4j-api:1.6.6',
+            'mysql:mysql-connector-java:5.1.18',
+            'org.springframework:spring-test:3.1.2.RELEASE'
+    )
+    testCompile (
+            'junit:junit:4.+'
+    )
+
+    def cargoVersion = '1.2.2'
+    cargo (
+            "org.codehaus.cargo:cargo-core-uberjar:$cargoVersion",
+            "org.codehaus.cargo:cargo-ant:$cargoVersion"
+    )
+}
+
+
+task deployWar(dependsOn: build) << {
+    copy {
+        from war.archivePath
+        into "${tomcatHome}/webapps"
+    }
+}
+
+task gogo(dependsOn: deployWar)
+
+compileJava {
+    outputs.dir 'build/classes'
+    outputs.upToDateWhen { false }
+}
