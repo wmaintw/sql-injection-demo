@@ -1,6 +1,7 @@
 package mymvc.controller;
 
 import mymvc.domain.User;
+import mymvc.service.AuditService;
 import mymvc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuditService auditService;
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "message", required = false) String message, ModelMap model) {
         User user = new User();
@@ -33,6 +37,11 @@ public class UserController {
         if ((currentUser = userService.exist(user)) != null) {
             model.addAttribute("currentUser", currentUser);
             session.setAttribute("loginUser", currentUser);
+
+            System.out.println("before login");
+            auditService.add("Login success",  currentUser);
+            System.out.println("after login");
+
             return "redirect:welcome";
         } else {
             model.addAttribute("message", "Login failed.");

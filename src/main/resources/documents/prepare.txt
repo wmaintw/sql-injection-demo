@@ -1,0 +1,4 @@
+Make sure only 1 account exist in database, and it's Admin user:
+username: admin
+password: 123
+

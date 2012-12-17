@@ -8,6 +8,10 @@ import org.springframework.stereotype.Repository;
 public class DefaultUserService implements UserService {
 
     @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
     private UserDao userDao;
 
     @Override

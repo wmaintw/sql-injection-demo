@@ -1,13 +1,13 @@
 package mymvc.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue
+    @Column(name = "user_id")
     private int id;
 
     private String username;
@@ -15,6 +15,7 @@ public class User {
     private String name;
     private String role;
     private int salary;
+
 
     public int getId() {
         return id;
